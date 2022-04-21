@@ -1,13 +1,14 @@
 import React from 'react';
-import {Text, StyleSheet} from 'react-native';
+import {Text, StyleSheet, TextStyle} from 'react-native';
 
 type TypograhpyProps = {
   text: string;
-  variant: 'title' | 'paragraph';
+  variant: 'title' | 'paragraph' | 'button';
+  style?: TextStyle;
 };
 
-const Typography = ({text, variant}: TypograhpyProps) => {
-  return <Text style={styles[variant]}>{text}</Text>;
+const Typography = ({text, variant, style}: TypograhpyProps) => {
+  return <Text style={[styles[variant], style]}>{text}</Text>;
 };
 
 const styles = StyleSheet.create({
@@ -18,6 +19,11 @@ const styles = StyleSheet.create({
   },
   paragraph: {
     color: 'black',
+  },
+  button: {
+    color: 'black',
+    fontSize: 12,
+    fontWeight: 'bold',
   },
 });
 
