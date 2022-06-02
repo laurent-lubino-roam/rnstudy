@@ -1,6 +1,7 @@
-import {StyleSheet, Text, TouchableHighlight, Switch} from 'react-native';
+import {StyleSheet, TouchableHighlight, Switch, View} from 'react-native';
 import React from 'react';
 import {Todo} from '../../../models/Todo';
+import Typography from '../../../components/Typography';
 
 type TodoListItemProps = {
   todo: Todo;
@@ -12,14 +13,18 @@ const TodoListItem = ({todo, onCheckChange, onPress}: TodoListItemProps) => {
   return (
     <TouchableHighlight
       style={styles.itemContainer}
-      onPress={() => onPress(todo.id)}>
+      onPress={() => onPress(todo.id)}
+      underlayColor="#5f5f5f">
       <>
         <Switch
           value={todo.checked}
           onValueChange={value => onCheckChange(todo.id, value)}
           style={styles.checkbox}
         />
-        <Text>{todo.title}</Text>
+        <View style={styles.containerTitle}>
+          <Typography variant="paragraph" text={todo.title} />
+        </View>
+        <Typography variant="paragraph" text=">" style={styles.chevron} />
       </>
     </TouchableHighlight>
   );
@@ -31,10 +36,15 @@ const styles = StyleSheet.create({
   itemContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingVertical: 10,
-    paddingHorizontal: 5,
+    padding: 6,
   },
   checkbox: {
     marginRight: 10,
+  },
+  containerTitle: {flex: 1},
+  chevron: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: '#afafaf',
   },
 });

@@ -15,6 +15,10 @@ export default function useTodolistScreen() {
     navigate('Todo', {id});
   };
 
+  const openAddTodo = () => {
+    navigate('AddTodo');
+  };
+
   return {
     data: {
       todos,
@@ -22,6 +26,7 @@ export default function useTodolistScreen() {
     operations: {
       onItemCheckChange,
       navigateToTodo,
+      openAddTodo,
     },
   };
 }
