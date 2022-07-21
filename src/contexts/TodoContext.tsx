@@ -1,5 +1,6 @@
-import React, {createContext, useContext, useState} from 'react';
+import React, {createContext, useContext, useEffect, useState} from 'react';
 import {Todo, TodoInitialValues} from '../models/Todo';
+import RNSI from 'react-native-sensitive-info';
 
 type TodoContext = {
   todos: Todo[];
@@ -26,11 +27,27 @@ export const useTodoContext = () => useContext(TodoContext);
 
 const {Provider} = TodoContext;
 
+const TODO_SECURE_KEY = 'todolist';
+const secureStorageConfig = {
+  sharedPreferencesName: 'todo',
+  keychainService: 'todo',
+};
+
 const TodoProvider: React.FC = ({children}) => {
-  const [todos, setTodos] = useState<Array<Todo>>([
-    new Todo({title: 'Groceries', description: 'Fruits'}),
-    new Todo({title: 'Groceries', description: 'Fruits'}),
-  ]);
+  const [todos, setTodos] = useState<Array<Todo>>([]);
+
+  const getTodoFromStorage = async () => {
+    const todosFromStorageStringified = await RNSI.getItem(
+      TODO_SECURE_KEY,
+      secureStorageConfig,
+    );
+    const todoStorage = JSON.parse(todosFromStorageStringified) || [];
+    setTodos(todoStorage);
+  };
+
+  useEffect(() => {
+    getTodoFromStorage();
+  }, []);
 
   const getTodoById = (id: Todo['id']): Todo | undefined => {
     return todos.find(todo => todo.id === id);
@@ -38,10 +55,20 @@ const TodoProvider: React.FC = ({children}) => {
   const addTodo = (todo: TodoInitialValues): void => {
     const newTodos = todos;
     newTodos.push(new Todo(todo));
+    RNSI.setItem(
+      TODO_SECURE_KEY,
+      JSON.stringify(newTodos),
+      secureStorageConfig,
+    );
     setTodos([...newTodos]);
   };
   const deleteTodo = (id: Todo['id']): void => {
     const newTodos = todos.filter(todo => todo.id === id);
+    RNSI.setItem(
+      TODO_SECURE_KEY,
+      JSON.stringify(newTodos),
+      secureStorageConfig,
+    );
     setTodos([...newTodos]);
   };
   const editTodo = (
@@ -58,6 +85,11 @@ const TodoProvider: React.FC = ({children}) => {
       // @ts-ignore
       newTodos[index][k] = v;
     });
+    RNSI.setItem(
+      TODO_SECURE_KEY,
+      JSON.stringify(newTodos),
+      secureStorageConfig,
+    );
     setTodos([...newTodos]);
   };
 
